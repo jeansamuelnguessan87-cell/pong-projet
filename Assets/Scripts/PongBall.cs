@@ -12,8 +12,11 @@ public class PongBall : MonoBehaviour
     private int scorePlayer = 0;
     private int scoreComputer = 0;
 
+    private AudioSource audioSource;
+
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         SetDirection();
     }
 
@@ -25,6 +28,8 @@ public class PongBall : MonoBehaviour
         if (transform.position.z < -zMaxDistance && direction.z < 0)
         {
             scoreComputer++;
+            // Étape 2 : Appel de la vérification après le point de l'IA
+            VerifierFinDePartie();
             SetDirection();
         }
 
@@ -32,6 +37,8 @@ public class PongBall : MonoBehaviour
         if (transform.position.z > zMaxDistance && direction.z > 0)
         {
             scorePlayer++;
+            // Étape 2 : Appel de la vérification après le point du Joueur
+            VerifierFinDePartie();
             SetDirection();
         }
     }
@@ -63,6 +70,26 @@ public class PongBall : MonoBehaviour
         if (collision.gameObject.tag == "Side")
         {
             direction.x *= -1;
+        }
+
+        audioSource.Play();
+    }
+
+    // Étape 1 : Ajout de la fonction de vérification de fin de partie tout en bas
+    private void VerifierFinDePartie()
+    {
+        // On vérifie si l'un des deux scores a atteint ou dépassé 5 points
+        if (scorePlayer >= 5 || scoreComputer >= 5)
+        {
+            // 1. On remet les scores numériques à zéro dans le code
+            scorePlayer = 0;
+            scoreComputer = 0;
+
+            // 2. On met à jour l'affichage sur l'écran (corrigé en scoreText)
+            scoreText.text = "0 - 0";
+
+            // 3. Petit message dans la console Unity
+            Debug.Log("Partie terminée ! Les scores reviennent à zéro.");
         }
     }
 }
